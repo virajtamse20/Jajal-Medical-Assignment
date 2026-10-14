@@ -1,0 +1,187 @@
+{
+  "info": {
+    "name": "Jajal Medical Case Management API",
+    "description": "Postman / Thunder Client API collection for testing Jajal Medical Case Management endpoints, role permissions, and validation.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "sanctum_admin_token_2026",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth - Login as Admin (200)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@jajalmedical.com\",\n  \"password\": \"123456\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "login"]
+        }
+      }
+    },
+    {
+      "name": "2. Auth - Invalid Login (401)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"admin@jajalmedical.com\",\n  \"password\": \"wrongpassword\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/login",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "login"]
+        }
+      }
+    },
+    {
+      "name": "3. Cases - List Cases (Paginated)",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cases?page=1&per_page=10&status=Planning",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "cases"],
+          "query": [
+            { "key": "page", "value": "1" },
+            { "key": "per_page", "value": "10" },
+            { "key": "status", "value": "Planning" }
+          ]
+        }
+      }
+    },
+    {
+      "name": "4. Cases - Create Case (201)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"case_number\": \"CASE-9921\",\n  \"patient_reference\": \"PAT-9921\",\n  \"surgeon_name\": \"Dr. Marcus Thorne\",\n  \"implant_type\": \"Titanium Cranial Reconstruction Mesh\",\n  \"status\": \"Planning\",\n  \"priority\": \"High\",\n  \"surgery_date\": \"2026-11-20\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/cases",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "cases"]
+        }
+      }
+    },
+    {
+      "name": "5. Cases - Create Duplicate Case Number (422)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"case_number\": \"CASE-0001\",\n  \"patient_reference\": \"PAT-DUP\",\n  \"surgeon_name\": \"Dr. Eleanor Vance\",\n  \"implant_type\": \"Titanium Mesh\",\n  \"status\": \"Planning\",\n  \"priority\": \"High\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/cases",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "cases"]
+        }
+      }
+    },
+    {
+      "name": "6. Cases - Get One Case",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cases/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "cases", "1"]
+        }
+      }
+    },
+    {
+      "name": "7. Cases - Update Case",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"case_number\": \"CASE-0001\",\n  \"patient_reference\": \"PAT-8492\",\n  \"surgeon_name\": \"Dr. Eleanor Vance\",\n  \"implant_type\": \"Titanium Cranial Reconstruction Mesh\",\n  \"status\": \"Approved\",\n  \"priority\": \"High\",\n  \"surgery_date\": \"2026-10-24\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/cases/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "cases", "1"]
+        }
+      }
+    },
+    {
+      "name": "8. Cases - Delete Case (Admin Only)",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{token}}" }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/api/cases/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "cases", "1"]
+        }
+      }
+    },
+    {
+      "name": "9. Automated Test Suite Runner",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/tests/run",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "tests", "run"]
+        }
+      }
+    },
+    {
+      "name": "10. Bonus - Public Holiday Checker",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/holidays?date=2026-11-26&country=US",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "holidays"],
+          "query": [
+            { "key": "date", "value": "2026-11-26" },
+            { "key": "country", "value": "US" }
+          ]
+        }
+      }
+    }
+  ]
+}
